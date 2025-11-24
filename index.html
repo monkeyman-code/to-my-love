@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Letter For You</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d0e15;
+            --envelope-main: #f0f0f0;
+            --envelope-flap: #e0e0e0;
+            --envelope-shadow: rgba(0,0,0,0.5);
+            --heart-color: #ef4444;
+            --text-color: #f3f4f6;
+            --font-arcade: 'Press Start 2P', cursive;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: var(--font-arcade);
+            overflow: hidden;
+            color: var(--text-color);
+        }
+
+        /* --- Starry Background --- */
+        .star {
+            position: absolute;
+            background: white;
+            width: 2px;
+            height: 2px;
+            box-shadow: 0 0 4px white;
+            animation: twinkle var(--duration) infinite ease-in-out;
+            opacity: 0.8;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* --- Floating 8-bit Hearts --- */
+        .pixel-heart {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: var(--heart-color);
+            box-shadow: 
+                4px 0 var(--heart-color), -4px 0 var(--heart-color),
+                8px 0 var(--heart-color), -8px 0 var(--heart-color),
+                12px 0 var(--heart-color), -12px 0 var(--heart-color),
+                
+                0 4px var(--heart-color), 4px 4px var(--heart-color), -4px 4px var(--heart-color),
+                8px 4px var(--heart-color), -8px 4px var(--heart-color),
+                12px 4px var(--heart-color), -12px 4px var(--heart-color),
+                16px 4px var(--heart-color), -16px 4px var(--heart-color),
+
+                0 8px var(--heart-color), 4px 8px var(--heart-color), -4px 8px var(--heart-color),
+                8px 8px var(--heart-color), -8px 8px var(--heart-color),
+                12px 8px var(--heart-color), -12px 8px var(--heart-color),
+                16px 8px var(--heart-color), -16px 8px var(--heart-color),
+
+                0 12px var(--heart-color), 4px 12px var(--heart-color), -4px 12px var(--heart-color),
+                8px 12px var(--heart-color), -8px 12px var(--heart-color),
+                12px 12px var(--heart-color), -12px 12px var(--heart-color),
+
+                0 16px var(--heart-color), 4px 16px var(--heart-color), -4px 16px var(--heart-color),
+                8px 16px var(--heart-color), -8px 16px var(--heart-color),
+
+                0 20px var(--heart-color), 4px 20px var(--heart-color), -4px 20px var(--heart-color),
+                
+                0 24px var(--heart-color);
+            
+            pointer-events: none;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(1); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+        }
+
+        /* --- Envelope Container --- */
+        #envelope-container {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s;
+            z-index: 20;
+        }
+
+        #envelope-container:hover {
+            transform: scale(1.05);
+        }
+
+        .envelope {
+            width: 300px;
+            height: 200px;
+            background-color: var(--envelope-main);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.5);
+            border: 4px solid #fff;
+        }
+
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0; 
+            height: 0; 
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 100px solid var(--envelope-flap);
+            z-index: 2;
+            transform-origin: top;
+            transition: transform 0.5s;
+        }
+
+        .wax-seal {
+            position: absolute;
+            top: 40px;
+            width: 40px;
+            height: 40px;
+            background-color: var(--heart-color);
+            border-radius: 50%; /* Using circle for simpler seal */
+            z-index: 3;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .envelope-text {
+            color: #333;
+            font-size: 14px;
+            margin-top: 50px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* --- The Letter --- */
+        #letter-content {
+            display: none;
+            width: 90%;
+            max-width: 600px;
+            background: rgba(31, 41, 55, 0.9);
+            border: 4px solid #fff;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+            z-index: 30;
+            animation: fadeIn 1s forwards;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .letter-text {
+            font-size: 14px;
+            line-height: 2.2;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .highlight {
+            color: var(--color-primary); /* Use yellow for constellation */
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+
+        .heart-icon {
+            color: var(--heart-color);
+            display: inline-block;
+            animation: beat 1s infinite;
+        }
+
+        @keyframes beat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .close-btn {
+            margin-top: 30px;
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+            padding: 10px 20px;
+            font-family: var(--font-arcade);
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: white;
+            color: black;
+        }
+        
+        .click-hint {
+            position: absolute;
+            bottom: -40px;
+            width: 100%;
+            text-align: center;
+            font-size: 10px;
+            animation: blink 1.5s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Background Elements -->
+    <div id="stars-container"></div>
+    <div id="hearts-container"></div>
+
+    <!-- Envelope Stage -->
+    <div id="envelope-container" onclick="openLetter()">
+        <div class="envelope">
+            <div class="flap"></div>
+            <div class="wax-seal">♥</div>
+            <div class="envelope-text">
+                TO: MY LOVE<br>
+                <span style="font-size: 10px; color: #666;">(CLICK TO OPEN)</span>
+            </div>
+        </div>
+        <div class="click-hint">PRESS START TO OPEN</div>
+    </div>
+
+    <!-- Letter Stage -->
+    <div id="letter-content">
+        <p class="letter-text">
+            "If my soul is the vast,<br>
+            uncharted midnight,<br><br>
+            then <span style="color: #f59e0b;">your love</span> is the only<br>
+            <span class="highlight">constellation</span><br>
+            I know by heart<br><br>
+            a brilliant, ancient pattern<br>
+            guiding me home<br>
+            through every inevitable darkness."
+        </p>
+        <br>
+        <div class="heart-icon" style="font-size: 24px;">♥</div>
+        <br>
+        <!-- Optional: Reset button if they want to close/re-read -->
+        <!-- <button class="close-btn" onclick="location.reload()">CLOSE</button> -->
+    </div>
+
+    <script>
+        // --- 1. Generate Stars ---
+        const starsContainer = document.getElementById('stars-container');
+        const starCount = 100;
+
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+            const duration = Math.random() * 3 + 2; // 2 to 5 seconds
+            
+            star.style.left = `${x}%`;
+            star.style.top = `${y}%`;
+            star.style.setProperty('--duration', `${duration}s`);
+            
+            starsContainer.appendChild(star);
+        }
+
+        // --- 2. Generate Floating Hearts ---
+        const heartsContainer = document.getElementById('hearts-container');
+        
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('pixel-heart');
+            
+            // Random position and scaling
+            const left = Math.random() * 100;
+            const scale = Math.random() * 0.5 + 0.5; // 0.5 to 1.0 size
+            const duration = Math.random() * 5 + 5; // 5 to 10 seconds rising speed
+            
+            heart.style.left = `${left}%`;
+            heart.style.transform = scale(`${scale}`);
+            heart.style.animationDuration = `${duration}s`;
+            
+            heartsContainer.appendChild(heart);
+
+            // Remove after animation ends to prevent memory leak
+            setTimeout(() => {
+                heart.remove();
+            }, duration * 1000);
+        }
+
+        // Create a heart every 400ms
+        setInterval(createHeart, 400);
+
+
+        // --- 3. Interaction ---
+        function openLetter() {
+            const envelope = document.getElementById('envelope-container');
+            const letter = document.getElementById('letter-content');
+            
+            // Animate envelope out
+            envelope.style.transform = 'scale(1.5)';
+            envelope.style.opacity = '0';
+            
+            setTimeout(() => {
+                envelope.style.display = 'none';
+                letter.style.display = 'block';
+                
+                // Enhance the background intensity when letter opens
+                document.body.style.background = "radial-gradient(circle at center, #1a1e2e 0%, #0d0e15 100%)";
+            }, 300);
+        }
+    </script>
+</body>
+</html>
